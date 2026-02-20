@@ -423,12 +423,12 @@ return h("div",{style:{minHeight:"100vh",background:S.bg,color:S.text,fontFamily
   // Product cards
   h("div",{style:{padding:"16px 24px"}},
     h("div",{style:{fontSize:".75rem",color:S.textDim,letterSpacing:2,marginBottom:10,fontWeight:600}},"MONITORING "+monitored.length+" PRODUCT"+(monitored.length>1?"S":"")),
-    h("div",{style:{display:"flex",gap:10,overflowX:"auto",paddingBottom:8}},
+    h("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}},
       monitored.map(function(p){
         var pPct=p.initial_stock>0?Math.max(0,Math.min(100,(p.current_stock/p.initial_stock)*100)):0;
         var pCol=pPct>50?S.green:pPct>20?S.yellow:S.red;
         var kcd=killCDs[p.bc_product_id];
-        return h("div",{key:p.id,style:{flex:"0 0 280px",background:S.card,border:"1px solid "+S.border,borderRadius:S.radius,padding:16,position:"relative"}},
+        return h("div",{key:p.id,style:{background:S.card,border:"1px solid "+S.border,borderRadius:S.radius,padding:16,position:"relative"}},
           p.is_killed?h("div",{style:{position:"absolute",top:0,left:0,right:0,bottom:0,background:"rgba(255,0,0,0.08)",borderRadius:S.radius,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1}},
             h("div",{style:{color:S.red,fontWeight:800,fontSize:".85rem",letterSpacing:2}},"⛔ SOLD OUT")):null,
           h("div",{style:{fontSize:".9rem",fontWeight:700,color:"#fff",marginBottom:4,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}},p.product_name),

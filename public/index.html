@@ -120,7 +120,7 @@ function loadCategories(){
 
 function searchP(){
   setLoading(true);
-  var url=AP+"?store="+SH+"&action=list_products&limit=30";
+  var url=AP+"?store="+SH+"&action=list_products&limit=250";
   if(search)url+="&keyword="+encodeURIComponent(search);
   if(selCat)url+="&category_id="+selCat;
   fetch(url).then(function(r){return r.json()}).then(function(d){setProducts(d.data||[]);setLoading(false)}).catch(function(){setLoading(false)});
@@ -354,7 +354,7 @@ return h("div",{style:{minHeight:"100vh",background:S.bg,color:S.text,fontFamily
         if(priceMax!==""&&p.price>parseFloat(priceMax))return false;
         return true;
       });
-      return h("div",{style:{border:"1px solid "+S.border,borderRadius:S.radius,overflow:"hidden"}},
+      return h("div",{style:{border:"1px solid "+S.border,borderRadius:S.radius,overflowY:"auto",maxHeight:"calc(100vh - 220px)"}},
       fp.map(function(p){
         var sel=isSelected(p.id);
         return h("div",{key:p.id,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 16px",borderBottom:"1px solid #1a1a1a",background:sel?"#1a2a1a":S.card,transition:"background .15s"}},

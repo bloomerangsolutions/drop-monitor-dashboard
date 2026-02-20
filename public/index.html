@@ -313,7 +313,22 @@ return h("div",{style:{minHeight:"100vh",background:S.bg,color:S.text,fontFamily
   ),
   h("div",{style:{padding:24,display:"flex",gap:24,alignItems:"flex-start"}},
    h("div",{style:{flex:1,minWidth:0}},
-    h("h2",{style:{fontSize:"1rem",color:S.text,letterSpacing:1,marginBottom:20,fontWeight:700}},"SELECT PRODUCTS TO MONITOR"),
+    h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}},
+      h("h2",{style:{fontSize:"1rem",color:S.text,letterSpacing:1,fontWeight:700}},"SELECT PRODUCTS TO MONITOR"),
+      products.length>0?h("button",{onClick:function(){
+        var fp=products.filter(function(p){
+          if(stockFilter==="in_stock"&&p.inventory_level<=0)return false;
+          if(stockFilter==="sold_out"&&p.inventory_level>0)return false;
+          if(priceMin!==""&&p.price<parseFloat(priceMin))return false;
+          if(priceMax!==""&&p.price>parseFloat(priceMax))return false;
+          return true;
+        });
+        var allSelected=fp.every(function(p){return isSelected(p.id)});
+        if(allSelected){setSelected(function(prev){var fpIds=fp.map(function(p){return p.id});return prev.filter(function(s){return fpIds.indexOf(s.id)===-1})})}
+        else{setSelected(function(prev){var existing=prev.map(function(s){return s.id});var toAdd=fp.filter(function(p){return existing.indexOf(p.id)===-1});return prev.concat(toAdd)})}
+      },style:{padding:"8px 20px",background:"#1a1a1a",color:S.blue,border:"1px solid "+S.blue+"66",fontFamily:S.sans,fontSize:".75rem",fontWeight:700,borderRadius:S.radiusSm,letterSpacing:1}},
+      function(){var fp=products.filter(function(p){if(stockFilter==="in_stock"&&p.inventory_level<=0)return false;if(stockFilter==="sold_out"&&p.inventory_level>0)return false;if(priceMin!==""&&p.price<parseFloat(priceMin))return false;if(priceMax!==""&&p.price>parseFloat(priceMax))return false;return true});return fp.length>0&&fp.every(function(p){return isSelected(p.id)})?"DESELECT ALL":"SELECT ALL"}()):null
+    ),
     h("div",{style:{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}},
       h("input",{type:"text",value:search,onChange:function(e){setSearch(e.target.value)},onKeyDown:function(e){if(e.key==="Enter")searchP()},placeholder:"Search products by name or SKU...",
         style:{flex:2,minWidth:200,padding:"12px 16px",background:"#1a1a1a",border:"1px solid "+S.borderLight,color:"#fff",fontSize:".9rem",fontFamily:S.sans,borderRadius:S.radiusSm}}),

@@ -89,6 +89,9 @@ var _pr=us([]),products=_pr[0],setProducts=_pr[1];
 var _se=us(""),search=_se[0],setSearch=_se[1];
 var _ca=us([]),categories=_ca[0],setCategories=_ca[1];
 var _sc=us(""),selCat=_sc[0],setSelCat=_sc[1];
+var _sf=us("all"),stockFilter=_sf[0],setStockFilter=_sf[1];
+var _pmin=us(""),priceMin=_pmin[0],setPriceMin=_pmin[1];
+var _pmax=us(""),priceMax=_pmax[0],setPriceMax=_pmax[1];
 var _mp=us([]),monitored=_mp[0],setMonitored=_mp[1];
 var _sl=us([]),selected=_sl[0],setSelected=_sl[1];
 var _or=us([]),orders=_or[0],setOrders=_or[1];
@@ -322,8 +325,37 @@ return h("div",{style:{minHeight:"100vh",background:S.bg,color:S.text,fontFamily
       h("button",{onClick:searchP,disabled:loading,
         style:{padding:"12px 28px",background:S.red,color:"#fff",border:"none",fontFamily:S.sans,fontSize:".85rem",fontWeight:700,borderRadius:S.radiusSm,letterSpacing:1,whiteSpace:"nowrap"}},loading?"SEARCHING...":"SEARCH")
     ),
-    h("div",{style:{border:"1px solid "+S.border,borderRadius:S.radius,overflow:"hidden"}},
-      products.map(function(p){
+    h("div",{style:{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap",alignItems:"center"}},
+      h("div",{style:{display:"flex",gap:4}},
+        ["all","in_stock","sold_out"].map(function(v){
+          var labels={all:"All",in_stock:"In Stock",sold_out:"Sold Out"};
+          var active=stockFilter===v;
+          return h("button",{key:v,onClick:function(){setStockFilter(v)},
+            style:{padding:"8px 16px",background:active?(v==="in_stock"?"#002a11":v==="sold_out"?"#2a0000":"#1a1a1a"):"#111",
+              color:active?(v==="in_stock"?S.green:v==="sold_out"?S.red:"#fff"):S.textDim,
+              border:"1px solid "+(active?(v==="in_stock"?S.green+"66":v==="sold_out"?S.red+"66":S.borderLight):S.border),
+              fontFamily:S.sans,fontSize:".75rem",fontWeight:active?700:500,borderRadius:S.radiusSm,letterSpacing:1}},labels[v])
+        })
+      ),
+      h("div",{style:{display:"flex",gap:6,alignItems:"center",marginLeft:8}},
+        h("span",{style:{fontSize:".75rem",color:S.textDim,fontWeight:600,letterSpacing:1}},"PRICE"),
+        h("input",{type:"number",value:priceMin,onChange:function(e){setPriceMin(e.target.value)},placeholder:"Min",
+          style:{width:80,padding:"8px 10px",background:"#1a1a1a",border:"1px solid "+S.borderLight,color:"#fff",fontSize:".8rem",fontFamily:S.sans,borderRadius:S.radiusSm}}),
+        h("span",{style:{color:S.textDim}},"–"),
+        h("input",{type:"number",value:priceMax,onChange:function(e){setPriceMax(e.target.value)},placeholder:"Max",
+          style:{width:80,padding:"8px 10px",background:"#1a1a1a",border:"1px solid "+S.borderLight,color:"#fff",fontSize:".8rem",fontFamily:S.sans,borderRadius:S.radiusSm}})
+      )
+    ),
+    function(){
+      var fp=products.filter(function(p){
+        if(stockFilter==="in_stock"&&p.inventory_level<=0)return false;
+        if(stockFilter==="sold_out"&&p.inventory_level>0)return false;
+        if(priceMin!==""&&p.price<parseFloat(priceMin))return false;
+        if(priceMax!==""&&p.price>parseFloat(priceMax))return false;
+        return true;
+      });
+      return h("div",{style:{border:"1px solid "+S.border,borderRadius:S.radius,overflow:"hidden"}},
+      fp.map(function(p){
         var sel=isSelected(p.id);
         return h("div",{key:p.id,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 16px",borderBottom:"1px solid #1a1a1a",background:sel?"#1a2a1a":S.card,transition:"background .15s"}},
           h("div",{style:{flex:1}},
@@ -336,8 +368,8 @@ return h("div",{style:{minHeight:"100vh",background:S.bg,color:S.text,fontFamily
             style:{padding:"8px 20px",background:sel?"#0a1a0a":"#1a2a1a",color:sel?S.red:S.green,border:"1px solid "+(sel?S.red:S.green),fontFamily:S.sans,fontSize:".8rem",fontWeight:700,borderRadius:S.radiusSm,letterSpacing:1,minWidth:90}},sel?"REMOVE":"+ ADD")
         );
       }),
-      products.length===0&&!loading?h("div",{style:{padding:50,textAlign:"center",color:S.textDim,fontSize:".9rem"}},"Search for products to start monitoring"):null
-    )
+      fp.length===0&&!loading?h("div",{style:{padding:50,textAlign:"center",color:S.textDim,fontSize:".9rem"}},products.length===0?"Search for products to start monitoring":"No products match filters"):null
+    )}()
    ),
     selected.length>0?h("div",{style:{flex:"0 0 360px",position:"sticky",top:24,border:"1px solid "+S.green+"44",borderRadius:S.radius,padding:20,background:"#0a1a0a"}},
       h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}},

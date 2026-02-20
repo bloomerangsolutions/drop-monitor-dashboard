@@ -489,10 +489,10 @@ return h("div",{style:{minHeight:"100vh",background:S.bg,color:S.text,fontFamily
           ),
           h("div",{style:{display:"flex",gap:6}},
             !p.is_killed?h("button",{onClick:function(){initKill(p.bc_product_id)},
-              style:{flex:1,padding:"6px 0",color:"#fff",border:"1px solid "+S.red,background:kcd!==undefined?"#ff0000":"#4a0000",fontFamily:S.sans,fontSize:".7rem",fontWeight:700,borderRadius:4,letterSpacing:1}},
-              kcd!==undefined?"KILLING "+kcd+"...":"SOLD OUT"):null,
+              style:{flex:1,padding:"6px 0",color:"#fff",border:"1px solid "+S.red,background:kcd!==undefined?"#ff0000":"#4a0000",fontFamily:S.sans,fontSize:".6rem",fontWeight:700,borderRadius:4,letterSpacing:0}},
+              kcd!==undefined?"SELLING OUT "+kcd+"...":"CLICK TO FORCE SELL OUT"):null,
             h("button",{onClick:function(){stopOne(p.bc_product_id)},
-              style:{flex:1,padding:"6px 0",color:S.textDim,border:"1px solid "+S.borderLight,background:"#1a1a1a",fontFamily:S.sans,fontSize:".7rem",fontWeight:600,borderRadius:4}},"STOP")
+              style:{flex:1,padding:"6px 0",color:S.textDim,border:"1px solid "+S.borderLight,background:"#1a1a1a",fontFamily:S.sans,fontSize:".65rem",fontWeight:600,borderRadius:4}},"REMOVE FROM MONITORING")
           )
         );
       })
